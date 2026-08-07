@@ -17,7 +17,35 @@ int main()
     //initiating menu loop
     while (menuChoice != 3) {
 
+        //listing menu options
+        std::cout << "1. Start New Battle\n";
+        std::cout << "2. View Instructions\n";
+        std::cout << "3. Exit\n";
+        std::cout << "Selection: ";
 
+        //getting user input
+        std::cin >> menuChoice;
+
+        //switch to operate menu
+        switch (menuChoice) {
+        case 1:
+            
+            //TODO: start battle simulation
+            std::cout << "Battle logic has yet to be added\n\n";
+            break;
+
+        case 2:
+            
+            //TODO: display instructions
+            std::cout << "Instructions yet to be added\n\n";
+            break;
+
+        case 3:
+
+            //informing user the application is exiting
+            std::cout << "Exiting application. Goodbye!\n";
+            break;
+        }
     }
 }
 
