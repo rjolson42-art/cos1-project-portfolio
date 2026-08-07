@@ -28,18 +28,18 @@ List the correct Terminal commands to do the actions listed below. Replace **CMD
 - [ dir ]: List files and folders
 - [ dir /a ]: List files and folders, including invisible files
 - [ dir ]: List all files and folders, in human readable form
-- [ CMD ]: Change directory
-- [ CMD ]: Change directory, go to root directory
-- [ CMD ]: Change directory and go to user home directory
-- [ CMD ]: Change directory, go up one folder level
-- [ CMD ]: Change directory, go up two folder levels
-- [ CMD ]: Change directory to my desktop!
+-  cd [path] : Change directory
+- [ cd \ ]: Change directory, go to root directory
+- [ cd %userprofile% ]: Change directory and go to user home directory
+- [ cd . . ]: Change directory, go up one folder level
+- [ cd . .\. . ]: Change directory, go up two folder levels
+- [ cd %userprofile%\Desktop ]: Change directory to my desktop!
 
 **2. Using Terminal...**
 
 **Folder Drop:** Try typing "cd" followed by a space, and then drag a folder into terminal and press return. Test this out and describe your results below.
 
-[ Describe Results Here ]
+This changes the working directory without having to type a file path.
 
 ## Topic: Version Control & Git
 
@@ -47,40 +47,48 @@ Version control, also known as revision control, records changes to a file or se
 
 **1. There are three types of version control.**
 
-[ Name & describe the three types of version control here.]
+Local: This is a database on your local machine that tracks and stores changes over time.
+
+Centralized: This is a database stored on a central server that allows multiple clients to check out and work on files from the database.
+
+Distributed: All clients have a full clone of all the files from the database.
 
 **2. Using Terminal, there are also essential Git commands to know.**
 
 List the correct Git commands to do the actions listed below in Terminal. Replace CMD with the correct command and keep or enhance the brief description.
 
-- [ CMD ]: Clone a repository
-- [ CMD ]: Set-up a global user name
-- [ CMD ]: Set-up a global email address (to match my GitHub account email)
-- [ CMD ]: Shows the current state of your directory and staging area
-- [ CMD ]: Add modified files to the next commit
-- [ CMD ]: Make a commit with a new message
-- [ CMD ]: Show my commit history
-- [ CMD ]: Show Git's help screen
+- [ git clone <repository-url> ]: Clone a repository
+- [ git config -- global user.name "Name" ]: Set-up a global user name
+- [ git config --global user.email "Email" ]: Set-up a global email address (to match my GitHub account email)
+- [ git status ]: Shows the current state of your directory and staging area
+- [ git add <file-name> ]: Add modified files to the next commit
+- [ git commit -m "Message" ]: Make a commit with a new message
+- [ git log ]: Show my commit history
+- [ git help ]: Show Git's help screen
 
 **3. Connecting to GitHub using Terminal.**
 HTTPS is the the correct way to connect to GitHub in this course. Describe how you connect to GitHub from Terminal using this protocol. What steps do you take?
 
-[ Describe the steps to connect Terminal to a GitHub repo here ]
+1.) Copy the URL provided in the HTTPS tab on GitHub.
+2.) Link the remote repository on your local terminal.
+3.) Stage local files and commit.
+4.) Push local commits to GitHub.
+5.) Log in to authorize connection over HTTPS.
 
 **4. Using .gitignore and Why it's Important**  
 Most repositories contain a .gitignore file.
 
 - What is the purpose of this file?
   <br>
-  [Fill in answer here]
+  It tells Git which files to exclude from version control to prevent unneeded or sensitive files from being committed and pushed to the repository.
 
 - What is the "**.DS_Store**" file and why would you want to ignore it?
   <br>
-  [Fill in answer here]
+  Its a hidden system file used to store folder display attributes. it is ignores because it is not relevant to the project source code.
 
 - What other file or folder would you want to add to a .gitignore file and why?
   <br>
-  [Fill in answer here]
+  Binaries and build directories should be added to .gitignore as they are automatically generated on compilation and waste repository storage.
 
 <br>
 
