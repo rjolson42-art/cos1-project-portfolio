@@ -5,7 +5,20 @@
 
 int main()
 {
-    std::cout << "Hello World!\n";
+
+    //header for application
+    std::cout << "\n====================================\n";
+    std::cout << "  WELCOME TO THE COMBAT SIMULATOR     \n";
+    std::cout << "====================================\n";
+    
+    //variable for menu selection
+    int menuChoice = 0;
+
+    //initiating menu loop
+    while (menuChoice != 3) {
+
+
+    }
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
