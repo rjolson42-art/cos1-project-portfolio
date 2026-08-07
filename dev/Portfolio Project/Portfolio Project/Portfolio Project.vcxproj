@@ -139,6 +139,7 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="cpp Files\CombatLogic.cpp" />
     <ClCompile Include="cpp Files\Ability.cpp" />
     <ClCompile Include="cpp Files\BattleMap.cpp" />
     <ClCompile Include="cpp Files\Portfolio Project.cpp" />
@@ -146,6 +147,7 @@
     <ClCompile Include="cpp Files\Unit.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="h Files\CombatLogic.h" />
     <ClInclude Include="h Files\Ability.h" />
     <ClInclude Include="h Files\BattleMap.h" />
     <ClInclude Include="h Files\Tile.h" />
