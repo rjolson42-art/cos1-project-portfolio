@@ -15,34 +15,8 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="cpp Files\Ability.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="cpp Files\BattleMap.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="cpp Files\Portfolio Project.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="cpp Files\Tile.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="cpp Files\Unit.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="h Files\Ability.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="h Files\BattleMap.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="h Files\Tile.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="h Files\Unit.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>
