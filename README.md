@@ -24,7 +24,7 @@ After completing the above steps, feel free to begin updating this readme where 
 
 ### Student First & Last Name
 
-Hello my name is [enter name]. I am a student from [where are you from?]. The purpose of this repository is to practice development using version control. This work will help me begin to build a portfolio of skills and accomplishment that can be shared in the future.
+Hello my name is Russell Olson. I am a student from Minnesota. The purpose of this repository is to practice development using version control. This work will help me begin to build a portfolio of skills and accomplishment that can be shared in the future.
 
 <br>
 
@@ -44,7 +44,7 @@ Each week I will summarize my milestone activity and progress by writing a stand
 
 ### Week 1
 
-Replace this paragraph with your stand up for this week. Use the prompts above to summarize your most recent milestone activity and work.
+This week I focused on building the core architecture for my combat simulator. I implemented my foundational classes to handle the 2D grid rendering and object management as well as got a small head start on the combat logic portion of my project. The biggest challenge that I had to work through this week was time management. I came in to the course a bit behind the eight ball this week, but a few late nights and cancelled plans goes a long way to help get caught up. I also had a little trouble with directory paths this week as I had not had separate folders for my source and implementation files before. This was a good learning experience for me about how to code directory paths differently. My biggest accomplishment this week was implementing my dynamic battle grid system as i had not worked with 2D vectors before. Next week I plan to build out the combat loop for my simulator and depending on how long that takes, possibly expand on player and enemy stats or add items to the simulator.  
 
 ### Week 2
 
