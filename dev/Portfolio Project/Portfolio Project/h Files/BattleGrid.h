@@ -32,16 +32,16 @@ public:
 	int GetHeight() const;
 
 	//methods for placement and bounds
-	bool isValidPosition(int x, int y) const;
-	bool placeUnit(Unit* unit, int targetX, int targetY);
-	bool removeUnit(int x, int y);
+	bool IsValidPosition(int x, int y) const;
+	bool PlaceUnit(Unit* unit, int targetX, int targetY);
+	bool RemoveUnit(int x, int y);
 
 	//tile getters
-	Tile* getTile(int x, int y);
-	const Tile* getTile(int x, int y) const;
+	Tile* GetTile(int x, int y);
+	const Tile* GetTile(int x, int y) const;
 
 	//display method
-	void displayGrid() const;
+	void DisplayGrid() const;
 };
 
 #endif // BATTLEGRID_H
