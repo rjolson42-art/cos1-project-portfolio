@@ -1,6 +1,6 @@
 // Portfolio Project.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
 
+#include "../h Files/CombatLogic.h"
 #include <iostream>
 
 int main()
@@ -11,6 +11,9 @@ int main()
     std::cout << "  WELCOME TO THE COMBAT SIMULATOR     \n";
     std::cout << "====================================\n";
     
+    //CombatLogic object
+    CombatLogic combatEngine(10, 10);
+
     //variable for menu selection
     int menuChoice = 0;
 
@@ -30,8 +33,9 @@ int main()
         switch (menuChoice) {
         case 1:
             
-            //TODO: start battle simulation
-            std::cout << "Battle logic has yet to be added\n\n";
+            combatEngine.StartNewBattle();
+
+            std::cout << "Combat logic to be added\n";
             break;
 
         case 2:
