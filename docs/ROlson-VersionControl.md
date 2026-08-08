@@ -99,16 +99,16 @@ Replace the example references below with your own links and recommended resourc
 [ Research Summary: What resource(s) did you find most helpful this past week and why? ]
 
 **Terminal Commands**  
-[Site Address](https://www.someaddress.com/full/url/)
+https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/windows-commands
 
 **Three Types of Version Control**  
 [Site Address](https://www.someaddress.com/full/url/)
 
 **Git Commands**  
-[Site Address](https://www.someaddress.com/full/url/)
+https://git-scm.com/cheat-sheet
 
 **Connecting to GitHub using Terminal**  
-[Site Address](https://www.someaddress.com/full/url/)
+https://docs.github.com/en/get-started/git-basics/set-up-git
 
 **Using .gitignore and Why it's Important**  
-[Site Address](https://www.someaddress.com/full/url/)
+https://www.datacamp.com/tutorial/gitignore?utm_cid=23552157106&utm_aid=188237543010&utm_campaign=230119_1-ps-other~dsa-tofu~data-eng_2-b2c_3-nam_4-prc_5-na_6-na_7-le_8-pdsh-go_9-nb-e_10-na_11-na&utm_loc=9019759-&utm_mtd=-c&utm_kw=&utm_source=google&utm_medium=paid_search&utm_content=ps-other~nam-en~dsa~tofu~tutorial-data-engineering&gad_source=1&gad_campaignid=23552157106&gbraid=0AAAAADQ9WsEJpDSjnn1z1wp9GGqMuLoSz&gclid=Cj0KCQjwp9vTBhCWARIsANaUrjv6HW_qpYkMNI059LgppZ_kqVK3MBzwMro3s9fA69PHM3xZomKCAOQaAt3kEALw_wcB
