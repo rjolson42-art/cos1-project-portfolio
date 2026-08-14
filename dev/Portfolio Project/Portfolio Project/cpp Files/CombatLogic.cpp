@@ -1,5 +1,6 @@
 #include "../h Files/CombatLogic.h"
 #include <iostream>
+#include <random>
 
 //constructor
 CombatLogic::CombatLogic(int mapWidth, int mapHeight)
@@ -26,9 +27,9 @@ void CombatLogic::StartNewBattle() {
     delete player;
     delete enemy;
 
-    //initializing player and enemy to default
+    //initializing default player and orc enemy
     player = new Unit();
-    enemy = new Unit();
+    enemy = new Unit("Orc Brute", UnitType::ORC_BRUTE);
 
     //callculating position to have user spawn at the bottom center of the battlefield
     int spawnX = map.GetWidth() / 2;
@@ -39,12 +40,30 @@ void CombatLogic::StartNewBattle() {
 
     std::cout << "> " << player->GetName() << " deployed\n";
 
+    //initiating random generator
+    std::random_device rd;
+    std::mt19937 gen(rd());
+
+    //generating random coordinates on the opposit half of the map from player spawn
+    std::uniform_int_distribution<> disX(0, map.GetWidth() - 1);
+    std::uniform_int_distribution<> disY(0, (map.GetHeight() / 2) - 1);
+
+    int enemySpawnX = disX(gen);
+    int enemySpawnY = disY(gen);
+
+    // Safety check: Ensure the enemy doesn't spawn on top of the player
+    while (enemySpawnX == spawnX && enemySpawnY == spawnY) {
+        enemySpawnX = disX(gen);
+        enemySpawnY = disY(gen);
+    }
+
+    //spawning enemy
+    map.PlaceUnit(enemy, enemySpawnX, enemySpawnY);
+
     isBattleActive = true;
 
     //printing battlefield
     map.DisplayGrid();
-
-    //TODO: enemy spawns
 
     //TODO: generate initiative order
 

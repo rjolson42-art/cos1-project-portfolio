@@ -33,6 +33,27 @@ Unit::Unit(std::string unitName, UnitType type)
         movementRange = 3;
         break;
 
+    case UnitType::GOBLIN_SCRAPPER:
+        
+        hp = maxHp = 22;
+        attackPower = 5;
+        movementRange = 4;
+        break;
+
+    case UnitType::ORC_BRUTE:
+        
+        hp = maxHp = 35;
+        attackPower = 7;
+        movementRange = 2; 
+        break;
+
+    case UnitType::SKELETON_ARCHER:
+        
+        hp = maxHp = 16;
+        attackPower = 9;
+        movementRange = 3; 
+        break;
+
     case UnitType::CUSTOM:
 
     default:

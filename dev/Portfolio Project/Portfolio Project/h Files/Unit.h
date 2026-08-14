@@ -11,7 +11,10 @@ enum class UnitType {
     CUSTOM,
     WARRIOR,
     ARCHER,
-    MAGE
+    MAGE,
+    GOBLIN_SCRAPPER,
+    ORC_BRUTE,
+    SKELETON_ARCHER
 };
 
 class Unit {
