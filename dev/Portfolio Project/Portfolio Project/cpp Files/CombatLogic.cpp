@@ -89,7 +89,19 @@ void CombatLogic::StartNewBattle() {
             << " (Initiative: " << combatants[i]->GetInitiative() << ")\n";
     }
 
-    //TODO: add combat logic
+    //initiating unit turns loop
+    for (Unit* unit : combatants) {
+
+        //cehcking if unit is still alive
+        if (!unit->IsAlive()) {
+
+            //skipping units turn
+            continue;
+        }
+
+        //running UnitTurn logic
+        UnitTurn(unit);
+    }
 }
 
 void CombatLogic::SortInitiativeOrder(std::vector<Unit*>& units) {
@@ -131,3 +143,97 @@ void CombatLogic::SortInitiativeOrder(std::vector<Unit*>& units) {
     }
 }
 
+void CombatLogic::UnitTurn(Unit* activeUnit) {
+
+    //bools for turn phases
+    bool hasMoved = false;
+    bool hasAttacked = false;
+    bool isTurnActive = true;
+
+    //initiating turn loop
+    while (isTurnActive && isBattleActive) {
+
+        //printing turn menu
+        std::cout << "\n--- " << activeUnit->GetName() << "'s Turn --- \n";
+        std::cout << "1. Move " << (hasMoved ? "(Done)" : "") << "\n";
+        std::cout << "2. Attack " << (hasAttacked ? "(Done)" : "") << "\n";
+        std::cout << "3. End Turn\n";
+        std::cout << "Choose an action: ";
+
+        //getting user input
+        std::string userChoice;
+        std::cin >> userChoice;
+
+        //variable for switch
+        int choice;
+
+        //attempting to convert string to int
+        try {
+
+            choice = std::stoi(userChoice);
+        }
+        catch (...) {
+
+            //informing user input is invalid
+            std::cout << "Input is not an integer. Please enter an integer to select a menu option.\n";
+
+            //setting menu choice to 0 to continue menu loop
+            choice = 0;
+
+            //returning to top of loop
+            continue;
+        }
+
+        switch (choice) {
+        case 1:
+
+            //checking if unit has already moved
+            if (!hasMoved) {
+
+                std::cout << "> Executing Movement (Range: " << activeUnit->GetMovementRange() << ")\n";
+
+                //TODO: Add unit movement logic
+                
+                hasMoved = true;
+            }
+            else {
+
+                //informing user that the unit has already moved
+                std::cout << "> Already moved this turn!\n";
+            }
+            break;
+
+        case 2:
+
+            //checking if unit has already attacked
+            if (!hasAttacked) {
+
+                std::cout << "> Executing Attack\n";
+
+                //TODO: Add unit attack logic
+
+                hasAttacked = true;
+            }
+            else {
+
+                //informing user they have already attacked
+                std::cout << "> Already attacked this turn!\n";
+            }
+            break;
+
+        case 3:
+
+            //informing user that this units turn is ending
+            std::cout << "> Ending turn for " << activeUnit->GetName() << ".\n";
+
+            isTurnActive = false;
+            break;
+
+        default:
+
+            //informing user input is out of range
+            std::cout << "Selection is not a valid option. Please enter an integer between 1 and 3\n";
+            break;
+        }
+    }
+}
