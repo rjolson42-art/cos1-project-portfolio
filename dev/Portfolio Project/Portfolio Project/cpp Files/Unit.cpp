@@ -1,4 +1,5 @@
 #include "../h Files/Unit.h"
+#include <random>
 
 //default constructor
 Unit::Unit()
@@ -31,6 +32,27 @@ Unit::Unit(std::string unitName, UnitType type)
         hp = maxHp = 14;
         attackPower = 10;
         movementRange = 3;
+        break;
+
+    case UnitType::GOBLIN_SCRAPPER:
+        
+        hp = maxHp = 22;
+        attackPower = 5;
+        movementRange = 4;
+        break;
+
+    case UnitType::ORC_BRUTE:
+        
+        hp = maxHp = 35;
+        attackPower = 7;
+        movementRange = 2; 
+        break;
+
+    case UnitType::SKELETON_ARCHER:
+        
+        hp = maxHp = 16;
+        attackPower = 9;
+        movementRange = 3; 
         break;
 
     case UnitType::CUSTOM:
@@ -80,6 +102,11 @@ bool Unit::IsAlive() const {
     return hp > 0; 
 }
 
+int Unit::GetInitiative() const {
+
+    return initiativeValue;
+}
+
 //position methods
 std::pair<int, int> Unit::GetPosition() const { 
     
@@ -116,4 +143,21 @@ void Unit::Heal(int amount) {
         //setting hp to max
         hp = maxHp;
     }
+}
+
+void Unit::RollInitiative() {
+    
+    //initiating random generator
+    std::random_device rd;
+    std::mt19937 gen(rd());
+
+    //setting generator bounds
+    std::uniform_int_distribution<> dis(1, 20);
+
+    int baseRoll = dis(gen);
+
+    //adding movementRange as an initiative modifier
+    int modifier = movementRange;
+
+    initiativeValue = baseRoll + modifier;
 }

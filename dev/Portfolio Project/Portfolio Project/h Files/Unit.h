@@ -11,7 +11,10 @@ enum class UnitType {
     CUSTOM,
     WARRIOR,
     ARCHER,
-    MAGE
+    MAGE,
+    GOBLIN_SCRAPPER,
+    ORC_BRUTE,
+    SKELETON_ARCHER
 };
 
 class Unit {
@@ -24,6 +27,7 @@ private:
     int maxHp;
     int attackPower;
     int movementRange;
+    int initiativeValue;
 
     //variable to track unit position
     std::pair<int, int> position;
@@ -46,6 +50,7 @@ public:
     int GetAttackPower() const;
     int GetMovementRange() const;
     bool IsAlive() const;
+    int GetInitiative() const;
 
     //position methods
     std::pair<int, int> GetPosition() const;
@@ -54,6 +59,7 @@ public:
     //combat methods
     void TakeDamage(int amount);
     void Heal(int amount);
+    void RollInitiative();
 };
 
 #endif // UNIT_H

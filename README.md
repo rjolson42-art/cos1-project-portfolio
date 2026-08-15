@@ -48,7 +48,7 @@ This week I focused on building the core architecture for my combat simulator. I
 
 ### Week 2
 
-My next stand up will go here...
+This week I focused on building out the core groundwork for my tactical grid combat simulator. I organized my task roadmap in GitHub Issues, got the main menu operational, and laid out the initial battlefield grid display. My main hurdle this week was anticipating edge cases with user menu choices and avoiding state corruption when bad inputs hit standard input. Working through input stream error handling took extra time to ensure invalid options don't break the main simulation loop. I successfully implemented basic input validation loops for the main menu, clear error prompts for invalid entries, and laid out the underlying data structure for the combat grid and turn phase tracking. Heading into week 3, my main focus will be fleshing out the combat itself and adding in AI action logic to enemy combatants.
 
 ### Week 3
 

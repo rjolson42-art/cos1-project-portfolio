@@ -26,6 +26,12 @@ public:
 
     //system initializer method
     void StartNewBattle();
+
+    //initiative order sorting function
+    void SortInitiativeOrder(std::vector<Unit*>& queue);
+
+    //combat turn function
+    void UnitTurn(Unit* activeUnit);
 };
 
 #endif // COMBATLOGIC_H

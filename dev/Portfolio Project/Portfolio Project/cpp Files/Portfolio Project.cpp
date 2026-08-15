@@ -14,8 +14,9 @@ int main()
     //CombatLogic object
     CombatLogic combatEngine(10, 10);
 
-    //variable for menu selection
+    //variables for menu selection
     int menuChoice = 0;
+    std::string inputChoice;
 
     //initiating menu loop
     while (menuChoice != 3) {
@@ -24,10 +25,28 @@ int main()
         std::cout << "1. Start New Battle\n";
         std::cout << "2. View Instructions\n";
         std::cout << "3. Exit\n";
+        std::cout << "Enter and integer 1-3\n";
         std::cout << "Selection: ";
 
         //getting user input
-        std::cin >> menuChoice;
+        std::cin >> inputChoice;
+
+        //attempting to convert string to int
+        try {
+
+            menuChoice = std::stoi(inputChoice);
+        }
+        catch (...) {
+
+            //informing user input is invalid
+            std::cout << "Input is not an integer. Please enter an integer to select a menu option.\n";
+            
+            //setting menu choice to 0 to continue menu loop
+            menuChoice = 0;
+
+            //returning to top of loop
+            continue;
+        }
 
         //switch to operate menu
         switch (menuChoice) {
@@ -48,6 +67,12 @@ int main()
 
             //informing user the application is exiting
             std::cout << "Exiting application. Goodbye!\n";
+            break;
+
+        default:
+
+            //informing user input is out of range
+            std::cout << "Selection is not a valid option. Please enter an integer between 1 and 3\n";
             break;
         }
     }
