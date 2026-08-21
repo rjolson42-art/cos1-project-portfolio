@@ -32,6 +32,7 @@ public:
 
     //combat turn function
     void UnitTurn(Unit* activeUnit);
+    void ProcessUnitMovement(Unit* activeUnit);
 };
 
 #endif // COMBATLOGIC_H

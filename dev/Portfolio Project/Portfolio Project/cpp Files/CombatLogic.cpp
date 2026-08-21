@@ -296,9 +296,8 @@ void CombatLogic::UnitTurn(Unit* activeUnit) {
             //checking if unit has already moved
             if (!hasMoved) {
 
-                std::cout << "> Executing Movement (Range: " << activeUnit->GetMovementRange() << ")\n";
-
-                //TODO: Add unit movement logic
+                //calling movement function
+                ProcessUnitMovement(activeUnit);
                 
                 hasMoved = true;
             }
@@ -342,4 +341,109 @@ void CombatLogic::UnitTurn(Unit* activeUnit) {
             break;
         }
     }
+}
+
+void CombatLogic::ProcessUnitMovement(Unit* activeUnit) {\
+
+    //printing active unit info
+    std::cout << "\n--- " << activeUnit->GetName() << "'s Movement Phase ---\n";
+    std::cout << "Max Movement Range: " << activeUnit->GetMovementRange() << "\n";
+
+    //getting unit current position
+    std::pair<int, int> currentPos = activeUnit->GetPosition();
+    int startX = currentPos.first;
+    int startY = currentPos.second;
+
+    //variable for user input and target location
+    std::string inputStr;
+    int targetX = -1;
+    int targetY = -1;
+
+    while (true) {
+
+        //getting user input on row location
+        while (true) {
+
+            //promting user to enter a row
+            std::cout << "Enter target X coordinate (0 to " << map.GetWidth() - 1 << "): ";
+            std::cin >> inputStr;
+
+            //validating integer
+            try {
+
+                targetX = std::stoi(inputStr);
+                break;
+            }
+            catch (...) {
+
+                //reprompting user to enter an integer
+                std::cout << "Input is not an integer. Please enter a valid integer.\n";
+            }
+        }
+
+        //getting user input on column location
+        while (true) {
+
+
+            std::cout << "Enter target Y coordinate (0 to " << map.GetHeight() - 1 << "): ";
+            std::cin >> inputStr;
+
+            //validating integer
+            try {
+
+                targetY = std::stoi(inputStr);
+                break;
+            }
+            catch (...) {
+
+                //repromting user to enter an integer
+                std::cout << "Input is not an integer. Please enter a valid integer.\n";
+            }
+        }
+
+        //checking input against grid bounds
+        if (!map.IsValidPosition(targetX, targetY)) {
+
+            //promting user that input is not a valid position
+            std::cout << "Error: Target position is out of bounds. Try again.\n";
+            continue;
+        }
+
+        //getting targeted tile
+        Tile* destTile = map.GetTile(targetX, targetY);
+
+        //checking if tile is occupied
+        if (destTile != nullptr && destTile->IsOccupied()) {
+
+            //repromting user to select a new location
+            std::cout << "Error: That tile is already occupied by another unit. Try again.\n";
+            continue;
+        }
+
+        //getting distance to new location
+        int distance = std::abs(targetX - startX) + std::abs(targetY - startY);
+
+        //checking if distance is within movement range
+        if (distance > activeUnit->GetMovementRange()) {
+
+            //repromting user for new location
+            std::cout << "Error: Target is out of range! (Distance: " << distance
+                << ", Max Range: " << activeUnit->GetMovementRange() << ")\n";
+            continue;
+        }
+
+        break;
+    }
+
+    //moving unit
+    map.RemoveUnit(startX, startY);
+    map.PlaceUnit(activeUnit, targetX, targetY);
+
+    //updating unit position
+    activeUnit->SetPosition(targetX, targetY);
+
+    std::cout << "> " << activeUnit->GetName() << " successfully moved to (" << targetX << ", " << targetY << ")!\n";
+
+    //reprinting battlegrid
+    map.DisplayGrid();
 }
