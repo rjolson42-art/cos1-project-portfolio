@@ -23,6 +23,112 @@ void CombatLogic::StartNewBattle() {
     std::cout << "         STARTING NEW BATTLEFIELD       \n";
     std::cout << "========================================\n";
 
+    //variables for menu navigation and validation
+    std::string inputChoice;
+    int menuChoice = 0;
+
+    while (true) {
+
+        //promting user if they want to customize battlefield
+        std::cout << "Would you like to customize the battlegrid size? (1 = Yes, 2 = No): ";
+        std::cin >> inputChoice;
+
+        //checking for integer
+        try {
+
+            menuChoice = std::stoi(inputChoice);
+        }
+        catch (...) {
+
+            //informing user input is not an integer
+            std::cout << "Input is not an integer. Please enter 1 for Yes or 2 for No.\n";
+            continue;
+        }
+
+        //checking if input is a valid option
+        if (menuChoice == 1 || menuChoice == 2) {
+
+            break;
+        }
+
+        //reprompting user
+        std::cout << "Please enter 1 or 2.\n";
+    }
+
+    //setting default dimensions
+    int gridWidth = 6;  
+    int gridHeight = 6;  
+
+    if (menuChoice == 1) {
+
+        //prompting user for grid width
+        while (true) {
+
+            std::cout << "Enter custom grid width (5 - 9): ";
+            std::cin >> inputChoice;
+
+            //validating integer
+            try {
+
+                gridWidth = std::stoi(inputChoice);
+            }
+            catch (...) {
+
+                //repromting user
+                std::cout << "Input is not an integer. Please enter a valid integer.\n";
+                continue;
+            }
+
+            //checking for valid range
+            if (gridWidth >= 5 && gridWidth <= 9) {
+
+                break;
+            }
+
+            //reprompting user
+            std::cout << "Width must be between 5 and 9 to fit the window properly.\n";
+        }
+
+        //prompting user for grid height
+        while (true) {
+
+            std::cout << "Enter custom grid height (5 - 9): ";
+            std::cin >> inputChoice;
+
+            //validating integer
+            try {
+
+                gridHeight = std::stoi(inputChoice);
+            }
+            catch (...) {
+
+                //reprompting user
+                std::cout << "Input is not an integer. Please enter a valid integer.\n";
+                continue;
+            }
+
+            //checking for valid range
+            if (gridHeight >= 5 && gridHeight <= 9) {
+
+                break;
+            }
+
+            //repromting user
+            std::cout << "Height must be between 5 and 9 to fit the window properly.\n";
+        }
+
+        //pringting grid details
+        std::cout << "\n[Custom grid selected: " << gridWidth << "x" << gridHeight << "]\n";
+    }
+    else {
+
+        //informing user default grid size will be used
+        std::cout << "\n[Using standard default grid size: 8x8]\n";
+    }
+
+    // Instantiate map using your overloaded constructor with chosen dimensions
+    map = BattleGrid(gridWidth, gridHeight);
+
     //deleting player and enemy data if there is any
     delete player;
     delete enemy;
