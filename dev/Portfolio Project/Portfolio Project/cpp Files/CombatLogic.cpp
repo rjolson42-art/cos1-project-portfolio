@@ -195,18 +195,57 @@ void CombatLogic::StartNewBattle() {
             << " (Initiative: " << combatants[i]->GetInitiative() << ")\n";
     }
 
-    //initiating unit turns loop
-    for (Unit* unit : combatants) {
+    int roundNumber = 1;
 
-        //cehcking if unit is still alive
-        if (!unit->IsAlive()) {
+    //looping unit turns until a combatant is slain
+    while (isBattleActive) {
 
-            //skipping units turn
-            continue;
+        //header for ech round
+        std::cout << "\n========================================\n";
+        std::cout << "              ROUND " << roundNumber << "                  \n";
+        std::cout << "========================================\n";
+
+        //looping through combatants
+        for (Unit* unit : combatants) {
+
+            //checking if unit is allive
+            if (!unit->IsAlive()) {
+
+                continue;
+            }
+
+            //running unit turn
+            UnitTurn(unit);
+
+            //checking for win/loss conditions
+            if (!player->IsAlive()) {
+
+                //printing defeat header
+                std::cout << "\n========================================\n";
+                std::cout << "             DEFEAT!                    \n";
+                std::cout << " You have been slain on the battlefield.\n";
+                std::cout << "========================================\n";
+                isBattleActive = false;
+                break;
+            }
+
+            if (!enemy->IsAlive()) {
+
+                //printing victory header
+                std::cout << "\n========================================\n";
+                std::cout << "             VICTORY!                   \n";
+                std::cout << "   You have slain the " << enemy->GetName() << "!\n";
+                std::cout << "========================================\n";
+                isBattleActive = false;
+                break;
+            }
+
+            //reprinting battlefield
+            map.DisplayGrid();
         }
 
-        //running UnitTurn logic
-        UnitTurn(unit);
+        // Advance to next round if both combatants are still alive
+        roundNumber++;
     }
 }
 
@@ -315,7 +354,15 @@ void CombatLogic::UnitTurn(Unit* activeUnit) {
 
                 std::cout << "> Executing Attack\n";
 
-                //TODO: Add unit attack logic
+                //checking for player or enemy as active unit and attacking
+                if (activeUnit == player) {
+
+                    ProcessUnitAttack(player, enemy);
+                }
+                else {
+                    
+                    ProcessUnitAttack(enemy, player);
+                }
 
                 hasAttacked = true;
             }
@@ -446,4 +493,51 @@ void CombatLogic::ProcessUnitMovement(Unit* activeUnit) {\
 
     //reprinting battlegrid
     map.DisplayGrid();
+}
+
+void CombatLogic::ProcessUnitAttack(Unit* attacker, Unit* defender) {
+
+
+    std::cout << "\n--- " << attacker->GetName() << "'s Attack Phase ---\n";
+
+    //getting position of attacker and defender
+    std::pair<int, int> attackerPos = attacker->GetPosition();
+    std::pair<int, int> defenderPos = defender->GetPosition();
+
+    //getting distance between combatants
+    int distance = std::abs(attackerPos.first - defenderPos.first) +
+        std::abs(attackerPos.second - defenderPos.second);
+
+    //checking if combatants are in attack range
+    if (distance > 1) {
+
+        //informing user attacker is out of range
+        std::cout << "Target " << defender->GetName() << " is out of melee range! Attack Failed! "
+            << "(Distance: " << distance << " tile(s))\n";
+        return;
+    }
+
+    ///getting damage amount
+    int damage = attacker->GetAttackPower();
+
+    //printing attack action
+    std::cout << "> " << attacker->GetName() << " attacks "
+        << defender->GetName() << " for " << damage << " damage!\n";
+
+    //applying damage to defender
+    defender->TakeDamage(damage);
+
+    //printing damage effects
+    std::cout << defender->GetName() << " HP: "
+        << defender->GetHp() << " / " << defender->GetMaxHp() << "\n";
+
+    //checking if defender has been defeated
+    if (!defender->IsAlive()) {
+
+        //printing that defender has been defeated
+        std::cout << "> " << defender->GetName() << " has been defeated!\n";
+
+        //removing defending unit
+        map.RemoveUnit(defenderPos.first, defenderPos.second);
+    }
 }
