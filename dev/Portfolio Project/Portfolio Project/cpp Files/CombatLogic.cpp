@@ -290,6 +290,14 @@ void CombatLogic::SortInitiativeOrder(std::vector<Unit*>& units) {
 
 void CombatLogic::UnitTurn(Unit* activeUnit) {
 
+    //checking for enemy
+    if (activeUnit != player) {
+
+        //calling AI turn sequence
+        ProcessAITurn(activeUnit, player);
+        return;
+    }
+
     //bools for turn phases
     bool hasMoved = false;
     bool hasAttacked = false;
@@ -539,5 +547,119 @@ void CombatLogic::ProcessUnitAttack(Unit* attacker, Unit* defender) {
 
         //removing defending unit
         map.RemoveUnit(defenderPos.first, defenderPos.second);
+    }
+}
+
+void CombatLogic::ProcessAITurn(Unit* enemyUnit, Unit* targetUnit) {
+
+    //printing header for enemy tuen
+    std::cout << "\n========================================\n";
+    std::cout << "          " << enemyUnit->GetName() << "'s TURN (AI)           \n";
+    std::cout << "========================================\n";
+
+    //getting unit positions
+    std::pair<int, int> enemyPos = enemyUnit->GetPosition();
+    std::pair<int, int> targetPos = targetUnit->GetPosition();
+
+    int currentX = enemyPos.first;
+    int currentY = enemyPos.second;
+    int targetX = targetPos.first;
+    int targetY = targetPos.second;
+
+    //calculating distance between units
+    int distance = std::abs(currentX - targetX) + std::abs(currentY - targetY);
+
+    //moving if out of attack range
+    if (distance > 1) {
+
+        //getting movement range
+        int movesLeft = enemyUnit->GetMovementRange();
+
+        //looping until movement is depleted
+        while (movesLeft > 0) {
+
+            //setting position
+            int nextX = currentX;
+            int nextY = currentY;
+
+            //getting horizontal direction
+            if (currentX < targetX) {
+
+                nextX++;
+            }
+            else if (currentX > targetX) {
+
+                nextX--;
+            }
+            //getting vertical direction
+            else if (currentY < targetY) {
+
+                nextY++;
+            }
+            else if (currentY > targetY) {
+
+                nextY--;
+            }
+
+            //checking if Tile is valid to move to
+            if (map.IsValidPosition(nextX, nextY)) {
+
+                //getting tile
+                Tile* tile = map.GetTile(nextX, nextY);
+
+                //checking if tile is occupied or invalid
+                if (tile != nullptr && !tile->IsOccupied()) {
+
+                    //recording new position
+                    currentX = nextX;
+                    currentY = nextY;
+
+                    //decreasing movement
+                    movesLeft--;
+
+                    //checking if in melee position
+                    if (std::abs(currentX - targetX) + std::abs(currentY - targetY) == 1) {
+
+                        break;
+                    }
+                    continue;
+                }
+            }
+            break;
+        }
+
+        //checking if unit has moved
+        if (currentX != enemyPos.first || currentY != enemyPos.second) {
+
+            //moving unit on the battlegrid
+            map.RemoveUnit(enemyPos.first, enemyPos.second);
+            map.PlaceUnit(enemyUnit, currentX, currentY);
+            enemyUnit->SetPosition(currentX, currentY);
+
+            //informing user user position has changed
+            std::cout << "> " << enemyUnit->GetName() << " advances to ("
+                << currentX << ", " << currentY << ").\n";
+        }
+        else {
+
+            //informing user postion has not changed
+            std::cout << "> " << enemyUnit->GetName() << " holds position.\n";
+        }
+    }
+
+
+    enemyPos = enemyUnit->GetPosition();
+    distance = std::abs(enemyPos.first - targetX) + std::abs(enemyPos.second - targetY);
+
+    //checking for melee attack distance
+    if (distance <= 1) {
+
+        //attacking
+        ProcessUnitAttack(enemyUnit, targetUnit);
+    }
+    else {
+
+        //informing user attack is out of range
+        std::cout << "> " << enemyUnit->GetName() << " is out of range to attack.\n";
     }
 }
