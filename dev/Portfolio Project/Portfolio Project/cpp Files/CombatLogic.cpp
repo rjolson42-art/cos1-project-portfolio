@@ -23,6 +23,112 @@ void CombatLogic::StartNewBattle() {
     std::cout << "         STARTING NEW BATTLEFIELD       \n";
     std::cout << "========================================\n";
 
+    //variables for menu navigation and validation
+    std::string inputChoice;
+    int menuChoice = 0;
+
+    while (true) {
+
+        //promting user if they want to customize battlefield
+        std::cout << "Would you like to customize the battlegrid size? (1 = Yes, 2 = No): ";
+        std::cin >> inputChoice;
+
+        //checking for integer
+        try {
+
+            menuChoice = std::stoi(inputChoice);
+        }
+        catch (...) {
+
+            //informing user input is not an integer
+            std::cout << "Input is not an integer. Please enter 1 for Yes or 2 for No.\n";
+            continue;
+        }
+
+        //checking if input is a valid option
+        if (menuChoice == 1 || menuChoice == 2) {
+
+            break;
+        }
+
+        //reprompting user
+        std::cout << "Please enter 1 or 2.\n";
+    }
+
+    //setting default dimensions
+    int gridWidth = 6;  
+    int gridHeight = 6;  
+
+    if (menuChoice == 1) {
+
+        //prompting user for grid width
+        while (true) {
+
+            std::cout << "Enter custom grid width (5 - 9): ";
+            std::cin >> inputChoice;
+
+            //validating integer
+            try {
+
+                gridWidth = std::stoi(inputChoice);
+            }
+            catch (...) {
+
+                //repromting user
+                std::cout << "Input is not an integer. Please enter a valid integer.\n";
+                continue;
+            }
+
+            //checking for valid range
+            if (gridWidth >= 5 && gridWidth <= 9) {
+
+                break;
+            }
+
+            //reprompting user
+            std::cout << "Width must be between 5 and 9 to fit the window properly.\n";
+        }
+
+        //prompting user for grid height
+        while (true) {
+
+            std::cout << "Enter custom grid height (5 - 9): ";
+            std::cin >> inputChoice;
+
+            //validating integer
+            try {
+
+                gridHeight = std::stoi(inputChoice);
+            }
+            catch (...) {
+
+                //reprompting user
+                std::cout << "Input is not an integer. Please enter a valid integer.\n";
+                continue;
+            }
+
+            //checking for valid range
+            if (gridHeight >= 5 && gridHeight <= 9) {
+
+                break;
+            }
+
+            //repromting user
+            std::cout << "Height must be between 5 and 9 to fit the window properly.\n";
+        }
+
+        //pringting grid details
+        std::cout << "\n[Custom grid selected: " << gridWidth << "x" << gridHeight << "]\n";
+    }
+    else {
+
+        //informing user default grid size will be used
+        std::cout << "\n[Using standard default grid size: 8x8]\n";
+    }
+
+    // Instantiate map using your overloaded constructor with chosen dimensions
+    map = BattleGrid(gridWidth, gridHeight);
+
     //deleting player and enemy data if there is any
     delete player;
     delete enemy;
@@ -89,18 +195,57 @@ void CombatLogic::StartNewBattle() {
             << " (Initiative: " << combatants[i]->GetInitiative() << ")\n";
     }
 
-    //initiating unit turns loop
-    for (Unit* unit : combatants) {
+    int roundNumber = 1;
 
-        //cehcking if unit is still alive
-        if (!unit->IsAlive()) {
+    //looping unit turns until a combatant is slain
+    while (isBattleActive) {
 
-            //skipping units turn
-            continue;
+        //header for ech round
+        std::cout << "\n========================================\n";
+        std::cout << "              ROUND " << roundNumber << "                  \n";
+        std::cout << "========================================\n";
+
+        //looping through combatants
+        for (Unit* unit : combatants) {
+
+            //checking if unit is allive
+            if (!unit->IsAlive()) {
+
+                continue;
+            }
+
+            //running unit turn
+            UnitTurn(unit);
+
+            //checking for win/loss conditions
+            if (!player->IsAlive()) {
+
+                //printing defeat header
+                std::cout << "\n========================================\n";
+                std::cout << "             DEFEAT!                    \n";
+                std::cout << " You have been slain on the battlefield.\n";
+                std::cout << "========================================\n";
+                isBattleActive = false;
+                break;
+            }
+
+            if (!enemy->IsAlive()) {
+
+                //printing victory header
+                std::cout << "\n========================================\n";
+                std::cout << "             VICTORY!                   \n";
+                std::cout << "   You have slain the " << enemy->GetName() << "!\n";
+                std::cout << "========================================\n";
+                isBattleActive = false;
+                break;
+            }
+
+            //reprinting battlefield
+            map.DisplayGrid();
         }
 
-        //running UnitTurn logic
-        UnitTurn(unit);
+        // Advance to next round if both combatants are still alive
+        roundNumber++;
     }
 }
 
@@ -144,6 +289,14 @@ void CombatLogic::SortInitiativeOrder(std::vector<Unit*>& units) {
 }
 
 void CombatLogic::UnitTurn(Unit* activeUnit) {
+
+    //checking for enemy
+    if (activeUnit != player) {
+
+        //calling AI turn sequence
+        ProcessAITurn(activeUnit, player);
+        return;
+    }
 
     //bools for turn phases
     bool hasMoved = false;
@@ -190,9 +343,8 @@ void CombatLogic::UnitTurn(Unit* activeUnit) {
             //checking if unit has already moved
             if (!hasMoved) {
 
-                std::cout << "> Executing Movement (Range: " << activeUnit->GetMovementRange() << ")\n";
-
-                //TODO: Add unit movement logic
+                //calling movement function
+                ProcessUnitMovement(activeUnit);
                 
                 hasMoved = true;
             }
@@ -210,7 +362,15 @@ void CombatLogic::UnitTurn(Unit* activeUnit) {
 
                 std::cout << "> Executing Attack\n";
 
-                //TODO: Add unit attack logic
+                //checking for player or enemy as active unit and attacking
+                if (activeUnit == player) {
+
+                    ProcessUnitAttack(player, enemy);
+                }
+                else {
+                    
+                    ProcessUnitAttack(enemy, player);
+                }
 
                 hasAttacked = true;
             }
@@ -235,5 +395,271 @@ void CombatLogic::UnitTurn(Unit* activeUnit) {
             std::cout << "Selection is not a valid option. Please enter an integer between 1 and 3\n";
             break;
         }
+    }
+}
+
+void CombatLogic::ProcessUnitMovement(Unit* activeUnit) {\
+
+    //printing active unit info
+    std::cout << "\n--- " << activeUnit->GetName() << "'s Movement Phase ---\n";
+    std::cout << "Max Movement Range: " << activeUnit->GetMovementRange() << "\n";
+
+    //getting unit current position
+    std::pair<int, int> currentPos = activeUnit->GetPosition();
+    int startX = currentPos.first;
+    int startY = currentPos.second;
+
+    //variable for user input and target location
+    std::string inputStr;
+    int targetX = -1;
+    int targetY = -1;
+
+    while (true) {
+
+        //getting user input on row location
+        while (true) {
+
+            //promting user to enter a row
+            std::cout << "Enter target X coordinate (0 to " << map.GetWidth() - 1 << "): ";
+            std::cin >> inputStr;
+
+            //validating integer
+            try {
+
+                targetX = std::stoi(inputStr);
+                break;
+            }
+            catch (...) {
+
+                //reprompting user to enter an integer
+                std::cout << "Input is not an integer. Please enter a valid integer.\n";
+            }
+        }
+
+        //getting user input on column location
+        while (true) {
+
+
+            std::cout << "Enter target Y coordinate (0 to " << map.GetHeight() - 1 << "): ";
+            std::cin >> inputStr;
+
+            //validating integer
+            try {
+
+                targetY = std::stoi(inputStr);
+                break;
+            }
+            catch (...) {
+
+                //repromting user to enter an integer
+                std::cout << "Input is not an integer. Please enter a valid integer.\n";
+            }
+        }
+
+        //checking input against grid bounds
+        if (!map.IsValidPosition(targetX, targetY)) {
+
+            //promting user that input is not a valid position
+            std::cout << "Error: Target position is out of bounds. Try again.\n";
+            continue;
+        }
+
+        //getting targeted tile
+        Tile* destTile = map.GetTile(targetX, targetY);
+
+        //checking if tile is occupied
+        if (destTile != nullptr && destTile->IsOccupied()) {
+
+            //repromting user to select a new location
+            std::cout << "Error: That tile is already occupied by another unit. Try again.\n";
+            continue;
+        }
+
+        //getting distance to new location
+        int distance = std::abs(targetX - startX) + std::abs(targetY - startY);
+
+        //checking if distance is within movement range
+        if (distance > activeUnit->GetMovementRange()) {
+
+            //repromting user for new location
+            std::cout << "Error: Target is out of range! (Distance: " << distance
+                << ", Max Range: " << activeUnit->GetMovementRange() << ")\n";
+            continue;
+        }
+
+        break;
+    }
+
+    //moving unit
+    map.RemoveUnit(startX, startY);
+    map.PlaceUnit(activeUnit, targetX, targetY);
+
+    //updating unit position
+    activeUnit->SetPosition(targetX, targetY);
+
+    std::cout << "> " << activeUnit->GetName() << " successfully moved to (" << targetX << ", " << targetY << ")!\n";
+
+    //reprinting battlegrid
+    map.DisplayGrid();
+}
+
+void CombatLogic::ProcessUnitAttack(Unit* attacker, Unit* defender) {
+
+
+    std::cout << "\n--- " << attacker->GetName() << "'s Attack Phase ---\n";
+
+    //getting position of attacker and defender
+    std::pair<int, int> attackerPos = attacker->GetPosition();
+    std::pair<int, int> defenderPos = defender->GetPosition();
+
+    //getting distance between combatants
+    int distance = std::abs(attackerPos.first - defenderPos.first) +
+        std::abs(attackerPos.second - defenderPos.second);
+
+    //checking if combatants are in attack range
+    if (distance > 1) {
+
+        //informing user attacker is out of range
+        std::cout << "Target " << defender->GetName() << " is out of melee range! Attack Failed! "
+            << "(Distance: " << distance << " tile(s))\n";
+        return;
+    }
+
+    ///getting damage amount
+    int damage = attacker->GetAttackPower();
+
+    //printing attack action
+    std::cout << "> " << attacker->GetName() << " attacks "
+        << defender->GetName() << " for " << damage << " damage!\n";
+
+    //applying damage to defender
+    defender->TakeDamage(damage);
+
+    //printing damage effects
+    std::cout << defender->GetName() << " HP: "
+        << defender->GetHp() << " / " << defender->GetMaxHp() << "\n";
+
+    //checking if defender has been defeated
+    if (!defender->IsAlive()) {
+
+        //printing that defender has been defeated
+        std::cout << "> " << defender->GetName() << " has been defeated!\n";
+
+        //removing defending unit
+        map.RemoveUnit(defenderPos.first, defenderPos.second);
+    }
+}
+
+void CombatLogic::ProcessAITurn(Unit* enemyUnit, Unit* targetUnit) {
+
+    //printing header for enemy tuen
+    std::cout << "\n========================================\n";
+    std::cout << "          " << enemyUnit->GetName() << "'s TURN (AI)           \n";
+    std::cout << "========================================\n";
+
+    //getting unit positions
+    std::pair<int, int> enemyPos = enemyUnit->GetPosition();
+    std::pair<int, int> targetPos = targetUnit->GetPosition();
+
+    int currentX = enemyPos.first;
+    int currentY = enemyPos.second;
+    int targetX = targetPos.first;
+    int targetY = targetPos.second;
+
+    //calculating distance between units
+    int distance = std::abs(currentX - targetX) + std::abs(currentY - targetY);
+
+    //moving if out of attack range
+    if (distance > 1) {
+
+        //getting movement range
+        int movesLeft = enemyUnit->GetMovementRange();
+
+        //looping until movement is depleted
+        while (movesLeft > 0) {
+
+            //setting position
+            int nextX = currentX;
+            int nextY = currentY;
+
+            //getting horizontal direction
+            if (currentX < targetX) {
+
+                nextX++;
+            }
+            else if (currentX > targetX) {
+
+                nextX--;
+            }
+            //getting vertical direction
+            else if (currentY < targetY) {
+
+                nextY++;
+            }
+            else if (currentY > targetY) {
+
+                nextY--;
+            }
+
+            //checking if Tile is valid to move to
+            if (map.IsValidPosition(nextX, nextY)) {
+
+                //getting tile
+                Tile* tile = map.GetTile(nextX, nextY);
+
+                //checking if tile is occupied or invalid
+                if (tile != nullptr && !tile->IsOccupied()) {
+
+                    //recording new position
+                    currentX = nextX;
+                    currentY = nextY;
+
+                    //decreasing movement
+                    movesLeft--;
+
+                    //checking if in melee position
+                    if (std::abs(currentX - targetX) + std::abs(currentY - targetY) == 1) {
+
+                        break;
+                    }
+                    continue;
+                }
+            }
+            break;
+        }
+
+        //checking if unit has moved
+        if (currentX != enemyPos.first || currentY != enemyPos.second) {
+
+            //moving unit on the battlegrid
+            map.RemoveUnit(enemyPos.first, enemyPos.second);
+            map.PlaceUnit(enemyUnit, currentX, currentY);
+            enemyUnit->SetPosition(currentX, currentY);
+
+            //informing user user position has changed
+            std::cout << "> " << enemyUnit->GetName() << " advances to ("
+                << currentX << ", " << currentY << ").\n";
+        }
+        else {
+
+            //informing user postion has not changed
+            std::cout << "> " << enemyUnit->GetName() << " holds position.\n";
+        }
+    }
+
+
+    enemyPos = enemyUnit->GetPosition();
+    distance = std::abs(enemyPos.first - targetX) + std::abs(enemyPos.second - targetY);
+
+    //checking for melee attack distance
+    if (distance <= 1) {
+
+        //attacking
+        ProcessUnitAttack(enemyUnit, targetUnit);
+    }
+    else {
+
+        //informing user attack is out of range
+        std::cout << "> " << enemyUnit->GetName() << " is out of range to attack.\n";
     }
 }

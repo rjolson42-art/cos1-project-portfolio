@@ -32,6 +32,9 @@ public:
 
     //combat turn function
     void UnitTurn(Unit* activeUnit);
+    void ProcessUnitMovement(Unit* activeUnit);
+    void ProcessUnitAttack(Unit* attacker, Unit* defender);
+    void ProcessAITurn(Unit* enemyUnit, Unit* targetUnit);
 };
 
 #endif // COMBATLOGIC_H
