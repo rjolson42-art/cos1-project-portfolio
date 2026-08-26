@@ -56,8 +56,8 @@ void CombatLogic::StartNewBattle() {
     }
 
     //setting default dimensions
-    int gridWidth = 6;  
-    int gridHeight = 6;  
+    int gridWidth = 6;
+    int gridHeight = 6;
 
     if (menuChoice == 1) {
 
@@ -86,7 +86,7 @@ void CombatLogic::StartNewBattle() {
             }
 
             //reprompting user
-            std::cout << "Width must be between 5 and 9 to fit the window properly.\n";
+            std::cout << "Height must be between 5 and 9 to fit the window properly.\n";
         }
 
         //prompting user for grid height
@@ -136,9 +136,76 @@ void CombatLogic::StartNewBattle() {
     //vector for combatants
     std::vector<Unit*> combatants;
 
-    //initializing default player and orc enemy and adding them to a combatants vector
-    player = new Unit();
+    //displaying archetype selection menu for the player
+    std::cout << "\n--- CHOOSE YOUR ARCHETYPE ---\n";
+    std::cout << "1. Warrior  (HP: 30 | ATK: 6  | MOV: 2 | RNG: 1)\n";
+    std::cout << "2. Archer   (HP: 18 | ATK: 8  | MOV: 4 | RNG: 3)\n";
+    std::cout << "3. Mage     (HP: 14 | ATK: 10 | MOV: 3 | RNG: 2)\n";
+    std::cout << "Select your class (1-3): ";
+
+    //variables for archetype selection
+    std::string archetypeChoiceStr;
+    int archetypeChoice = 0;
+
+    //setting default
+    UnitType playerType = UnitType::WARRIOR;
+
+    //validating archetype selection input
+    while (true) {
+
+        std::cin >> archetypeChoiceStr;
+
+        //checking for integer input
+        try {
+
+            archetypeChoice = std::stoi(archetypeChoiceStr);
+        }
+        catch (...) {
+
+            //informing user input is not an integer
+            std::cout << "Input is not an integer. Please enter a number between 1 and 3: ";
+            continue;
+        }
+
+        //checking if choice is in valid range
+        if (archetypeChoice >= 1 && archetypeChoice <= 3) {
+
+            break;
+        }
+
+        //reprompting user
+        std::cout << "Selection is out of range. Please enter 1, 2, or 3: ";
+    }
+
+    //selecting archetype based on user input
+    switch (archetypeChoice) {
+
+    case 1:
+
+        playerType = UnitType::WARRIOR;
+        break;
+
+    case 2:
+
+        playerType = UnitType::ARCHER;
+        break;
+
+    case 3:
+
+        playerType = UnitType::MAGE;
+        break;
+    }
+
+    //prompting user to enter custom hero name
+    std::string playerName;
+    std::cout << "Enter your hero's name: ";
+    std::cin >> playerName;
+
+    //initializing player unit with chosen name and archetype
+    player = new Unit(playerName, playerType);
     combatants.push_back(player);
+
+    //initializing enemy unit and adding to combatants vector
     enemy = new Unit("Orc Brute", UnitType::ORC_BRUTE);
     combatants.push_back(enemy);
 
