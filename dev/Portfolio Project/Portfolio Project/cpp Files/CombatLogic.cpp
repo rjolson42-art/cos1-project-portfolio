@@ -505,27 +505,27 @@ void CombatLogic::ProcessUnitMovement(Unit* activeUnit) {\
 
 void CombatLogic::ProcessUnitAttack(Unit* attacker, Unit* defender) {
 
-
     std::cout << "\n--- " << attacker->GetName() << "'s Attack Phase ---\n";
 
     //getting position of attacker and defender
     std::pair<int, int> attackerPos = attacker->GetPosition();
     std::pair<int, int> defenderPos = defender->GetPosition();
 
-    //getting distance between combatants
+    //getting distance between combatants using Manhattan distance
     int distance = std::abs(attackerPos.first - defenderPos.first) +
         std::abs(attackerPos.second - defenderPos.second);
 
-    //checking if combatants are in attack range
-    if (distance > 1) {
+    //checking if defender is within attackers specific attack range
+    if (distance > attacker->GetAttackRange()) {
 
-        //informing user attacker is out of range
-        std::cout << "Target " << defender->GetName() << " is out of melee range! Attack Failed! "
-            << "(Distance: " << distance << " tile(s))\n";
+        //informing user defender is out of attack range
+        std::cout << "Target " << defender->GetName() << " is out of range! Attack Failed! "
+            << "(Distance: " << distance << " tile(s), Max Range: "
+            << attacker->GetAttackRange() << " tile(s))\n";
         return;
     }
 
-    ///getting damage amount
+    //getting damage amount
     int damage = attacker->GetAttackPower();
 
     //printing attack action
@@ -545,14 +545,14 @@ void CombatLogic::ProcessUnitAttack(Unit* attacker, Unit* defender) {
         //printing that defender has been defeated
         std::cout << "> " << defender->GetName() << " has been defeated!\n";
 
-        //removing defending unit
+        //removing defending unit from the battlefield
         map.RemoveUnit(defenderPos.first, defenderPos.second);
     }
 }
 
 void CombatLogic::ProcessAITurn(Unit* enemyUnit, Unit* targetUnit) {
 
-    //printing header for enemy tuen
+    //printing header for enemy turn
     std::cout << "\n========================================\n";
     std::cout << "          " << enemyUnit->GetName() << "'s TURN (AI)           \n";
     std::cout << "========================================\n";
@@ -569,8 +569,8 @@ void CombatLogic::ProcessAITurn(Unit* enemyUnit, Unit* targetUnit) {
     //calculating distance between units
     int distance = std::abs(currentX - targetX) + std::abs(currentY - targetY);
 
-    //moving if out of attack range
-    if (distance > 1) {
+    //moving if out of units specific attack range
+    if (distance > enemyUnit->GetAttackRange()) {
 
         //getting movement range
         int movesLeft = enemyUnit->GetMovementRange();
@@ -617,8 +617,8 @@ void CombatLogic::ProcessAITurn(Unit* enemyUnit, Unit* targetUnit) {
                     //decreasing movement
                     movesLeft--;
 
-                    //checking if in melee position
-                    if (std::abs(currentX - targetX) + std::abs(currentY - targetY) == 1) {
+                    //checking if within units specific attack range to stop early
+                    if (std::abs(currentX - targetX) + std::abs(currentY - targetY) <= enemyUnit->GetAttackRange()) {
 
                         break;
                     }
@@ -636,23 +636,23 @@ void CombatLogic::ProcessAITurn(Unit* enemyUnit, Unit* targetUnit) {
             map.PlaceUnit(enemyUnit, currentX, currentY);
             enemyUnit->SetPosition(currentX, currentY);
 
-            //informing user user position has changed
+            //informing user position has changed
             std::cout << "> " << enemyUnit->GetName() << " advances to ("
                 << currentX << ", " << currentY << ").\n";
         }
         else {
 
-            //informing user postion has not changed
+            //informing user position has not changed
             std::cout << "> " << enemyUnit->GetName() << " holds position.\n";
         }
     }
 
-
+    //recalculating position and distance after movement phase
     enemyPos = enemyUnit->GetPosition();
     distance = std::abs(enemyPos.first - targetX) + std::abs(enemyPos.second - targetY);
 
-    //checking for melee attack distance
-    if (distance <= 1) {
+    //checking for attack range
+    if (distance <= enemyUnit->GetAttackRange()) {
 
         //attacking
         ProcessUnitAttack(enemyUnit, targetUnit);
