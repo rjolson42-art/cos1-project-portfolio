@@ -5,15 +5,21 @@
 //constructor
 CombatLogic::CombatLogic(int mapWidth, int mapHeight)
     : map(mapWidth, mapHeight),
-    player(nullptr),
+    party(),
     enemy(nullptr),
     isBattleActive(false) {}
 
 //destructor
 CombatLogic::~CombatLogic() {
 
-    delete player;
+    for (Unit* member : party) {
+
+        delete member;
+    }
+    party.clear();
+
     delete enemy;
+    enemy = nullptr;
 }
 
 void CombatLogic::StartNewBattle() {
@@ -29,7 +35,7 @@ void CombatLogic::StartNewBattle() {
 
     while (true) {
 
-        //promting user if they want to customize battlefield
+        //prompting user if they want to customize battlefield
         std::cout << "Would you like to customize the battlegrid size? (1 = Yes, 2 = No): ";
         std::cin >> inputChoice;
 
@@ -74,7 +80,7 @@ void CombatLogic::StartNewBattle() {
             }
             catch (...) {
 
-                //repromting user
+                //reprompting user
                 std::cout << "Input is not an integer. Please enter a valid integer.\n";
                 continue;
             }
@@ -86,7 +92,7 @@ void CombatLogic::StartNewBattle() {
             }
 
             //reprompting user
-            std::cout << "Height must be between 5 and 9 to fit the window properly.\n";
+            std::cout << "Width must be between 5 and 9 to fit the window properly.\n";
         }
 
         //prompting user for grid height
@@ -113,11 +119,11 @@ void CombatLogic::StartNewBattle() {
                 break;
             }
 
-            //repromting user
+            //reprompting user
             std::cout << "Height must be between 5 and 9 to fit the window properly.\n";
         }
 
-        //pringting grid details
+        //printing grid details
         std::cout << "\n[Custom grid selected: " << gridWidth << "x" << gridHeight << "]\n";
     }
     else {
@@ -129,111 +135,157 @@ void CombatLogic::StartNewBattle() {
     // Instantiate map using your overloaded constructor with chosen dimensions
     map = BattleGrid(gridWidth, gridHeight);
 
-    //deleting player and enemy data if there is any
-    delete player;
+    //clearing previous party memory
+    for (Unit* member : party) {
+        delete member;
+    }
+    party.clear();
     delete enemy;
 
     //vector for combatants
     std::vector<Unit*> combatants;
 
-    //displaying archetype selection menu for the player
-    std::cout << "\n--- CHOOSE YOUR ARCHETYPE ---\n";
-    std::cout << "1. Warrior  (HP: 30 | ATK: 6  | MOV: 2 | RNG: 1)\n";
-    std::cout << "2. Archer   (HP: 18 | ATK: 8  | MOV: 4 | RNG: 3)\n";
-    std::cout << "3. Mage     (HP: 14 | ATK: 10 | MOV: 3 | RNG: 2)\n";
-    std::cout << "Select your class (1-3): ";
+    //initializing random generator engine once for enemy selection and spawn calculations
+    std::random_device rd;
+    std::mt19937 gen(rd());
 
-    //variables for archetype selection
-    std::string archetypeChoiceStr;
-    int archetypeChoice = 0;
+    //prompting user for party size
+    int partySize = 1;
+    std::string partySizeStr;
 
-    //setting default
-    UnitType playerType = UnitType::WARRIOR;
+    std::cout << "\n--- PARTY FORMATION ---\n";
+    std::cout << "How many units would you like in your party? (1 - 3): ";
 
-    //validating archetype selection input
     while (true) {
 
-        std::cin >> archetypeChoiceStr;
+        std::cin >> partySizeStr;
 
-        //checking for integer input
         try {
 
-            archetypeChoice = std::stoi(archetypeChoiceStr);
+            partySize = std::stoi(partySizeStr);
         }
         catch (...) {
 
-            //informing user input is not an integer
             std::cout << "Input is not an integer. Please enter a number between 1 and 3: ";
             continue;
         }
 
-        //checking if choice is in valid range
-        if (archetypeChoice >= 1 && archetypeChoice <= 3) {
+        if (partySize >= 1 && partySize <= 3) {
 
             break;
         }
 
-        //reprompting user
-        std::cout << "Selection is out of range. Please enter 1, 2, or 3: ";
+        std::cout << "Selection out of range. Please enter 1, 2, or 3: ";
     }
 
-    //selecting archetype based on user input
-    switch (archetypeChoice) {
+    //populating user unit vector
+    for (int i = 0; i < partySize; ++i) {
 
-    case 1:
+        //printing menu for unit slection
+        std::cout << "\n--- RECRUIT MEMBER " << (i + 1) << " OF " << partySize << " ---\n";
+        std::cout << "1. Warrior  (HP: 30 | ATK: 6  | MOV: 2 | RNG: 1)\n";
+        std::cout << "2. Archer   (HP: 18 | ATK: 8  | MOV: 4 | RNG: 3)\n";
+        std::cout << "3. Mage     (HP: 14 | ATK: 10 | MOV: 3 | RNG: 2)\n";
+        std::cout << "Select class (1-3): ";
 
-        playerType = UnitType::WARRIOR;
-        break;
+        std::string archetypeChoiceStr;
+        int archetypeChoice = 0;
+        UnitType memberType = UnitType::WARRIOR;
 
-    case 2:
+        while (true) {
 
-        playerType = UnitType::ARCHER;
-        break;
+            std::cin >> archetypeChoiceStr;
 
-    case 3:
+            //validating input
+            try {
 
-        playerType = UnitType::MAGE;
-        break;
+                archetypeChoice = std::stoi(archetypeChoiceStr);
+            }
+            catch (...) {
+
+                //reprompting user to amke new slection
+                std::cout << "Input is not an integer. Please enter 1, 2, or 3: ";
+                continue;
+            }
+
+            if (archetypeChoice >= 1 && archetypeChoice <= 3) {
+
+                break;
+            }
+
+            //reprompting user
+            std::cout << "Selection out of range. Please enter 1, 2, or 3: ";
+        }
+
+        //getting unit type
+        switch (archetypeChoice) {
+
+        case 1:
+
+            memberType = UnitType::WARRIOR;
+            break;
+
+        case 2:
+
+            memberType = UnitType::ARCHER;
+            break;
+
+        case 3:
+
+            memberType = UnitType::MAGE;
+            break;
+        }
+
+        //prompting user for unit name
+        std::string memberName;
+        std::cout << "Enter name for Unit " << (i + 1) << ": ";
+        std::cin >> memberName;
+
+        //creating unit and adding to party and global turn order vector
+        Unit* member = new Unit(memberName, memberType);
+        party.push_back(member);
+        combatants.push_back(member);
     }
 
-    //prompting user to enter custom hero name
-    std::string playerName;
-    std::cout << "Enter your hero's name: ";
-    std::cin >> playerName;
+    //initializing vector of enemy archetypes
+    std::vector<std::pair<std::string, UnitType>> enemyPool = {
 
-    //initializing player unit with chosen name and archetype
-    player = new Unit(playerName, playerType);
-    combatants.push_back(player);
+        {"Orc Brute", UnitType::ORC_BRUTE},
+        {"Skeleton Archer", UnitType::SKELETON_ARCHER},
+        {"Goblin Scrapper", UnitType::GOBLIN_SCRAPPER}
+    };
 
-    //initializing enemy unit and adding to combatants vector
-    enemy = new Unit("Orc Brute", UnitType::ORC_BRUTE);
+    //getting enemy archetype
+    std::uniform_int_distribution<> enemyDist(0, static_cast<int>(enemyPool.size() - 1));
+    int randomIndex = enemyDist(gen);
+
+    //setting enemy archetype
+    std::string enemyName = enemyPool[randomIndex].first;
+    UnitType enemyType = enemyPool[randomIndex].second;
+
+    //setting random enemy as combatant
+    enemy = new Unit(enemyName, enemyType);
     combatants.push_back(enemy);
 
-    //callculating position to have user spawn at the bottom center of the battlefield
-    int spawnX = map.GetWidth() / 2;
+    std::cout << "\n[A wild " << enemy->GetName() << " appeared!]\n";
+
+    //calculating starting position to deploy party centered along the bottom row
+    int startX = (map.GetWidth() - static_cast<int>(party.size())) / 2;
     int spawnY = map.GetHeight() - 1;
 
-    //spawning user
-    map.PlaceUnit(player, spawnX, spawnY);
+    for (size_t i = 0; i < party.size(); ++i) {
 
-    std::cout << "> " << player->GetName() << " deployed\n";
+        int spawnX = startX + static_cast<int>(i);
+        map.PlaceUnit(party[i], spawnX, spawnY);
+        std::cout << "> " << party[i]->GetName() << " deployed at (" << spawnX << ", " << spawnY << ")\n";
+    }
 
-    //initiating random generator
-    std::random_device rd;
-    std::mt19937 gen(rd());
-
-    //generating random coordinates on the opposit half of the map from player spawn
+    //generating random coordinates on the opposite half of the map from party spawn
     std::uniform_int_distribution<> disX(0, map.GetWidth() - 1);
     std::uniform_int_distribution<> disY(0, (map.GetHeight() / 2) - 1);
 
     int enemySpawnX = disX(gen);
     int enemySpawnY = disY(gen);
-
-    //generating new enemy spawn point if it is the same as player spawn point
-    while (enemySpawnX == spawnX && enemySpawnY == spawnY) {
-        enemySpawnX = disX(gen);
-        enemySpawnY = disY(gen);
-    }
 
     //spawning enemy
     map.PlaceUnit(enemy, enemySpawnX, enemySpawnY);
@@ -267,7 +319,7 @@ void CombatLogic::StartNewBattle() {
     //looping unit turns until a combatant is slain
     while (isBattleActive) {
 
-        //header for ech round
+        //header for each round
         std::cout << "\n========================================\n";
         std::cout << "              ROUND " << roundNumber << "                  \n";
         std::cout << "========================================\n";
@@ -275,7 +327,7 @@ void CombatLogic::StartNewBattle() {
         //looping through combatants
         for (Unit* unit : combatants) {
 
-            //checking if unit is allive
+            //checking if unit is alive
             if (!unit->IsAlive()) {
 
                 continue;
@@ -284,18 +336,30 @@ void CombatLogic::StartNewBattle() {
             //running unit turn
             UnitTurn(unit);
 
-            //checking for win/loss conditions
-            if (!player->IsAlive()) {
+            //checking if any party members are still alive
+            bool isPartyAlive = false;
+            for (Unit* member : party) {
+
+                if (member->IsAlive()) {
+
+                    isPartyAlive = true;
+                    break;
+                }
+            }
+
+            //checking for defeat condition
+            if (!isPartyAlive) {
 
                 //printing defeat header
                 std::cout << "\n========================================\n";
                 std::cout << "             DEFEAT!                    \n";
-                std::cout << " You have been slain on the battlefield.\n";
+                std::cout << " Your party has been slain on the battlefield.\n";
                 std::cout << "========================================\n";
                 isBattleActive = false;
                 break;
             }
 
+            //checking for victory condition
             if (!enemy->IsAlive()) {
 
                 //printing victory header
@@ -311,7 +375,7 @@ void CombatLogic::StartNewBattle() {
             map.DisplayGrid();
         }
 
-        // Advance to next round if both combatants are still alive
+        // Advance to next round if both sides are still alive
         roundNumber++;
     }
 }
@@ -356,111 +420,104 @@ void CombatLogic::SortInitiativeOrder(std::vector<Unit*>& units) {
 }
 
 void CombatLogic::UnitTurn(Unit* activeUnit) {
+    if (!activeUnit || !activeUnit->IsAlive()) return;
 
-    //checking for enemy
-    if (activeUnit != player) {
+    //checking if active unit is part of user party
+    bool isPartyMember = false;
+    for (Unit* member : party) {
 
-        //calling AI turn sequence
-        ProcessAITurn(activeUnit, player);
-        return;
+        if (activeUnit == member) {
+
+            isPartyMember = true;
+            break;
+        }
     }
 
-    //bools for turn phases
-    bool hasMoved = false;
-    bool hasAttacked = false;
-    bool isTurnActive = true;
+    if (isPartyMember) {
+        
+        //informing user which unit turn it is
+        std::cout << "\n>>> " << activeUnit->GetName() << "'s Turn! <<<\n";
 
-    //initiating turn loop
-    while (isTurnActive && isBattleActive) {
+        bool turnEnded = false;
 
-        //printing turn menu
-        std::cout << "\n--- " << activeUnit->GetName() << "'s Turn --- \n";
-        std::cout << "1. Move " << (hasMoved ? "(Done)" : "") << "\n";
-        std::cout << "2. Attack " << (hasAttacked ? "(Done)" : "") << "\n";
-        std::cout << "3. End Turn\n";
-        std::cout << "Choose an action: ";
+        //looping user turn
+        while (!turnEnded && isBattleActive && enemy->IsAlive()) {
 
-        //getting user input
-        std::string userChoice;
-        std::cin >> userChoice;
+            //displaying action menu
+            std::cout << "\n--- CHOOSE ACTION FOR " << activeUnit->GetName() << " ---\n";
+            std::cout << "1. Move\n";
+            std::cout << "2. Attack\n";
+            std::cout << "3. End Turn\n";
+            std::cout << "Select action (1-3): ";
 
-        //variable for switch
-        int choice;
+            std::string actionInput;
+            int actionChoice = 0;
+            std::cin >> actionInput;
 
-        //attempting to convert string to int
-        try {
+            //validating input
+            try {
 
-            choice = std::stoi(userChoice);
-        }
-        catch (...) {
+                actionChoice = std::stoi(actionInput);
+            }
+            catch (...) {
 
-            //informing user input is invalid
-            std::cout << "Input is not an integer. Please enter an integer to select a menu option.\n";
+                std::cout << "Invalid input. Please enter a number between 1 and 3.\n";
+                continue;
+            }
 
-            //setting menu choice to 0 to continue menu loop
-            choice = 0;
+            switch (actionChoice) {
+            case 1:
 
-            //returning to top of loop
-            continue;
-        }
-
-        switch (choice) {
-        case 1:
-
-            //checking if unit has already moved
-            if (!hasMoved) {
-
-                //calling movement function
+                //calling movement method
                 ProcessUnitMovement(activeUnit);
-                
-                hasMoved = true;
-            }
-            else {
+                break;
 
-                //informing user that the unit has already moved
-                std::cout << "> Already moved this turn!\n";
-            }
-            break;
+            case 2:
 
-        case 2:
+                //calling attack method
+                ProcessUnitAttack(activeUnit, enemy);
 
-            //checking if unit has already attacked
-            if (!hasAttacked) {
+                //checking if enemy is killed
+                if (!enemy->IsAlive()) {
 
-                std::cout << "> Executing Attack\n";
-
-                //checking for player or enemy as active unit and attacking
-                if (activeUnit == player) {
-
-                    ProcessUnitAttack(player, enemy);
-                }
-                else {
-                    
-                    ProcessUnitAttack(enemy, player);
+                    turnEnded = true;
                 }
 
-                hasAttacked = true;
+                break;
+
+            case 3:
+
+                //informing user the turn has ended
+                std::cout << activeUnit->GetName() << " passes their turn.\n";
+                turnEnded = true;
+                break;
+
+            default:
+
+                //reprompting user for new slection
+                std::cout << "Selection out of range. Please choose 1, 2, or 3.\n";
+                break;
             }
-            else {
+        }
+    }
+    else if (activeUnit == enemy) {
+        
+        std::vector<Unit*> livingParty;
 
-                //informing user they have already attacked
-                std::cout << "> Already attacked this turn!\n";
+        //populating targets
+        for (Unit* member : party) {
+
+            if (member->IsAlive()) {
+
+                livingParty.push_back(member);
             }
-            break;
+        }
 
-        case 3:
-
-            //informing user that this units turn is ending
-            std::cout << "> Ending turn for " << activeUnit->GetName() << ".\n";
-
-            isTurnActive = false;
-            break;
-
-        default:
-
-            //informing user input is out of range
-            std::cout << "Selection is not a valid option. Please enter an integer between 1 and 3\n";
-            break;
+        if (!livingParty.empty()) {
+            
+            //selecting target
+            Unit* target = livingParty[0];
+            ProcessAITurn(enemy, target);
         }
     }
 }

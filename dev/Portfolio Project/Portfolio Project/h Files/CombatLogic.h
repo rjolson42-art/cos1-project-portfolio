@@ -12,7 +12,7 @@ private:
 
     //members
     BattleGrid map;
-    Unit* player;
+    std::vector<Unit*> party; 
     Unit* enemy;
     bool isBattleActive;
 
