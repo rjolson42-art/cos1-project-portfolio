@@ -52,8 +52,19 @@ This week I focused on building out the core groundwork for my tactical grid com
 
 ### Week 3
 
-Stay tuned, this stand up is coming soon...
+This week I focused on setting up my GitHub Issues for Milestone 3 and planning out key refactoring goals for the tactical grid combat simulator, including grid resizing and enemy AI logic.
 
+Challenges
+
+My biggest hurdle this week was working around console window limitations. Adjusting the combat grid so it displays cleanly without awkward line wrapping required tuning the grid layout and handling boundary checks carefully.
+
+Accomplishments
+
+I successfully mapped out my upcoming task milestones in GitHub Issues and finalized the layout logic for dynamic grid sizing to ensure the battlefield fits properly in the console.
+
+Next Steps
+
+Heading into next week, my main focus will be implementing the enemy AI class logic to control enemy units, allowing them to calculate movement paths and engage in combat turns automatically.
 ### Week 4
 
-My final stand up...
+This final week focused on bringing the C++ tactical grid combat simulator to completion, finalizing the combat loop, and conducting comprehensive testing across all menu systems and unit behaviors. Project Wrap-Up I fully implemented the enemy unit AI logic to handle movement path calculations and automated attacks, cleaned up grid rendering for consistent console display, and polished user input validation to prevent menu crashes. Challenges The main challenge was managing state and boundary checks within the tactical grid to prevent out-of-bounds movement and memory corruption during enemy AI turns. I worked through this by stepping through unit movement vectors and validating grid constraints prior to updating positions. Biggest Takeaway My biggest takeaway from this course has been the importance of upfront architectural planning and modular class design. Breaking features into small, isolated classes and mapping tasks into GitHub Issues made complex logic like turn management and grid state far easier to implement and debug. Future Development If I continued developing this project beyond this course, I would add a persistent save/load system using file I/O to store player progress and introduce diverse terrain tile types with unique movement penalties.
