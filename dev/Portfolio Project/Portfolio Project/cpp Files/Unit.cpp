@@ -17,7 +17,7 @@ Unit::Unit(std::string unitName, UnitType type)
 
         hp = maxHp = 30;
         attackPower = 6;
-        movementRange = 2;
+        movementRange = 3;
         attackRange = 1;
         break;
 

@@ -133,9 +133,9 @@ void CombatLogic::StartNewBattle() {
     else {
 
         //informing user default grid size will be used
-        std::cout << "\n[Using standard default grid size: 8x8]\n";
-        gridWidth = 8;
-        gridHeight = 8;
+        std::cout << "\n[Using standard default grid size: 6x6]\n";
+        gridWidth = 6;
+        gridHeight = 6;
     }
 
     // Instantiate map using your overloaded constructor with chosen dimensions
@@ -735,9 +735,9 @@ void CombatLogic::ProcessUnitAttack(Unit* attacker, Unit* defender) {
     std::pair<int, int> attackerPos = attacker->GetPosition();
     std::pair<int, int> defenderPos = defender->GetPosition();
 
-    //getting distance between combatants using Manhattan distance
-    int distance = std::abs(attackerPos.first - defenderPos.first) +
-        std::abs(attackerPos.second - defenderPos.second);
+    //getting distance using Chebyshev distance (allows 8-directional diagonal attacks at range 1)
+    int distance = std::max(std::abs(attackerPos.first - defenderPos.first),
+        std::abs(attackerPos.second - defenderPos.second));
 
     //checking if defender is within attackers specific attack range
     if (distance > attacker->GetAttackRange()) {
@@ -790,8 +790,8 @@ void CombatLogic::ProcessAITurn(Unit* enemyUnit, Unit* targetUnit) {
     int targetX = targetPos.first;
     int targetY = targetPos.second;
 
-    //calculating distance between units
-    int distance = std::abs(currentX - targetX) + std::abs(currentY - targetY);
+    //calculating distance between units using Chebyshev distance
+    int distance = std::max(std::abs(currentX - targetX), std::abs(currentY - targetY));
 
     //moving if out of units specific attack range
     if (distance > enemyUnit->GetAttackRange()) {
@@ -815,8 +815,9 @@ void CombatLogic::ProcessAITurn(Unit* enemyUnit, Unit* targetUnit) {
 
                 nextX--;
             }
+
             //getting vertical direction
-            else if (currentY < targetY) {
+            if (currentY < targetY) {
 
                 nextY++;
             }
@@ -842,7 +843,7 @@ void CombatLogic::ProcessAITurn(Unit* enemyUnit, Unit* targetUnit) {
                     movesLeft--;
 
                     //checking if within units specific attack range to stop early
-                    if (std::abs(currentX - targetX) + std::abs(currentY - targetY) <= enemyUnit->GetAttackRange()) {
+                    if (std::max(std::abs(currentX - targetX), std::abs(currentY - targetY)) <= enemyUnit->GetAttackRange()) {
 
                         break;
                     }
@@ -873,7 +874,7 @@ void CombatLogic::ProcessAITurn(Unit* enemyUnit, Unit* targetUnit) {
 
     //recalculating position and distance after movement phase
     enemyPos = enemyUnit->GetPosition();
-    distance = std::abs(enemyPos.first - targetX) + std::abs(enemyPos.second - targetY);
+    distance = std::max(std::abs(enemyPos.first - targetX), std::abs(enemyPos.second - targetY));
 
     //checking for attack range
     if (distance <= enemyUnit->GetAttackRange()) {
