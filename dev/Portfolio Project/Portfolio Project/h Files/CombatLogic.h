@@ -12,8 +12,8 @@ private:
 
     //members
     BattleGrid map;
-    Unit* player;
-    Unit* enemy;
+    std::vector<Unit*> party; 
+    std::vector<Unit*> enemies;
     bool isBattleActive;
 
 public:
@@ -35,6 +35,7 @@ public:
     void ProcessUnitMovement(Unit* activeUnit);
     void ProcessUnitAttack(Unit* attacker, Unit* defender);
     void ProcessAITurn(Unit* enemyUnit, Unit* targetUnit);
+    Unit* SelectTargetFromList(const std::vector<Unit*>& candidates);
 };
 
 #endif // COMBATLOGIC_H

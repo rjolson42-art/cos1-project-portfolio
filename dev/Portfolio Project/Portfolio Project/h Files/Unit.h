@@ -26,6 +26,7 @@ private:
     int hp;
     int maxHp;
     int attackPower;
+    int attackRange;
     int movementRange;
     int initiativeValue;
 
@@ -51,6 +52,7 @@ public:
     int GetMovementRange() const;
     bool IsAlive() const;
     int GetInitiative() const;
+    int GetAttackRange() const;
 
     //position methods
     std::pair<int, int> GetPosition() const;

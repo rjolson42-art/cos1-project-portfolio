@@ -17,13 +17,15 @@ Unit::Unit(std::string unitName, UnitType type)
 
         hp = maxHp = 30;
         attackPower = 6;
-        movementRange = 2;
+        movementRange = 3;
+        attackRange = 1;
         break;
 
     case UnitType::ARCHER:
 
         hp = maxHp = 18;
         attackPower = 8;
+        attackRange = 3;
         movementRange = 4;
         break;
 
@@ -31,6 +33,7 @@ Unit::Unit(std::string unitName, UnitType type)
 
         hp = maxHp = 14;
         attackPower = 10;
+        attackRange = 3;
         movementRange = 3;
         break;
 
@@ -39,19 +42,22 @@ Unit::Unit(std::string unitName, UnitType type)
         hp = maxHp = 22;
         attackPower = 5;
         movementRange = 4;
+        attackRange = 1;
         break;
 
     case UnitType::ORC_BRUTE:
         
         hp = maxHp = 35;
         attackPower = 7;
-        movementRange = 2; 
+        movementRange = 2;
+        attackRange = 1;
         break;
 
     case UnitType::SKELETON_ARCHER:
         
         hp = maxHp = 16;
         attackPower = 9;
+        attackRange = 3;
         movementRange = 3; 
         break;
 
@@ -105,6 +111,11 @@ bool Unit::IsAlive() const {
 int Unit::GetInitiative() const {
 
     return initiativeValue;
+}
+
+int Unit::GetAttackRange() const {
+
+    return attackRange;
 }
 
 //position methods
